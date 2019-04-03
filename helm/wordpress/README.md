@@ -1,0 +1,7 @@
+mkdir /kube
+mkdir /mariadb
+
+kubectl create -f wp-pvc.yaml
+kubectl create -f mariabd-pv.yaml
+
+helm install --name wordpress --set service.type=NodePort,wordpressUsername=admin,wordpressPassword=admin@password,mariadb.mariadbRootPassword=mariadb@pass,persistence.existingClaim=helm-pvc1,allowEmptyPassword=false stable/wordpress
