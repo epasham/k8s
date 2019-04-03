@@ -17,7 +17,3 @@ spec:
           serviceName: appsvc2
           servicePort: 80
         path: /app2
-      - backend:
-          serviceName: votesvc
-          servicePort: 80
-        path: /vote

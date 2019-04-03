@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: app1
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -23,7 +23,7 @@ kind: Deployment
 metadata:
   name: app2
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
