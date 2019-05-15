@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: sample-app01
-        image: vinish86/springboot:42
+        image: vinish86/springboot:dev
         ports:
         - containerPort: 8080
 ---
