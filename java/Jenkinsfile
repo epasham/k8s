@@ -1,6 +1,6 @@
 pipeline {
       environment {
-            registry = "vinish86/springboot"
+            registry = "ronsonblossom/springboot"
             registryCredential = 'dockerhub'
         }
     agent any
@@ -10,12 +10,12 @@ pipeline {
             steps {
                 echo 'Building..'
                 cleanWs()
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_cred', url: 'git@github.com:vinish86/kubernetes.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'gitrepo'], [$class: 'CheckoutOption', timeout: 100000]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_credronson', url: 'https://github.com/ronsonblossom/k8s.git']]])
             }
         }
         stage('Maven Build') {
             steps {
-                dir("java/springboot-jsp-helloworld"){
+                dir("gitrepo/java/springboot-jsp-helloworld"){
                     sh 'mvn clean'
    	                sh 'mvn package' 
                     echo 'Testing..'
@@ -26,9 +26,7 @@ pipeline {
         stage('DockerBuild') {
             steps {
                 echo 'Deploying....'
-                dir("java"){
-//                    dockerImage = docker.build registry + ":$BUILD_NUMBER", "-f $WORKSPACE/java/Dockerfile ."
-//                    docker.build registry + ":$BUILD_NUMBER", "-f Dockerfile ."
+                dir("gitrepo/java"){
                     sh 'docker build -t "$registry:$BUILD_NUMBER" -f Dockerfile .'
                 }
             }
@@ -36,10 +34,21 @@ pipeline {
         stage('DockerPush') {
             steps {
                 echo 'DockerPush image....'
-                withDockerRegistry(credentialsId: 'dockerhub', url: '') {
+                withDockerRegistry(credentialsId: 'dockerhub_credronson', url: '') {
                     // some block
                     sh 'docker push "$registry:$BUILD_NUMBER"'
                 }
+            }
+        }
+        stage('Kuberenetes Deployment') {
+            steps {
+                dir("gitrepo/jenkins"){
+                    
+                    sh "sed -i \"s/vinish86\\/springboot:dev/ronsonblossom\\/springboot:$BUILD_NUMBER/g\" app-deployments.yaml"
+                    sh 'kubectl apply -f app-deployments.yaml'
+                    echo 'Creating..'
+                }
+                
             }
         }
     }
