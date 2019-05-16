@@ -6,7 +6,7 @@
     <link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
-    <h2 class="hello-title">Hello ${name} version 4 !</h2>
+    <h2 class="hello-title">Hello ${name} version 5 !</h2>
     <script src="/js/main.js"></script>
 </body>
 </html>
