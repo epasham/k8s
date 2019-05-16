@@ -17,7 +17,6 @@ spec:
       containers:
       - name: sample-app01
         image: vinish86/springboot:dev
-        imagePullPolicy: "Always"
         ports:
         - containerPort: 8080
 ---
